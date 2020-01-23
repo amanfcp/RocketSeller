@@ -45,7 +45,41 @@ export default class Home extends React.Component {
                     />
                     <Text
                         style={styles.mainButtons._textStyle}
-                    >Products</Text>
+                    >
+                        Products
+                    </Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                    onPress={() => this.props.navigation.navigate('Orders')}
+                    style={styles.mainButtons}
+                >
+                    <Icon
+                        name='clipboard-pencil'
+                        type='foundation'
+                        size={30}
+                        iconStyle={styles.mainButtons._iconStyle}
+                    />
+                    <Text
+                        style={styles.mainButtons._textStyle}
+                    >
+                        Orders
+                    </Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                    onPress={() => this.props.navigation.navigate({ routeName: 'AddProduct', transitionStyle: 'inverted'})}
+                    style={styles.mainButtons}
+                >
+                    <Icon
+                        name='add-box'
+                        type='material'
+                        size={30}
+                        iconStyle={styles.mainButtons._iconStyle}
+                    />
+                    <Text
+                        style={styles.mainButtons._textStyle}
+                    >
+                        Add Product
+                    </Text>
                 </TouchableOpacity>
             </View>
         );
@@ -56,16 +90,17 @@ const styles = {
     main: {
         flex: 1,
         justifyContent: 'center',
-        alignItems: 'center'
+        alignItems: 'center',
     },
     mainButtons: {
-        _iconStyle:{
-            color:colors.white,
-            margin:5,
+        _iconStyle: {
+            color: colors.white,
+            margin: 5,
         },
-        _textStyle:{
-            color:colors.white
+        _textStyle: {
+            color: colors.white
         },
+        marginVertical: 5,
         width: 120,
         height: 120,
         backgroundColor: colors.green,

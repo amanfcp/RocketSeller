@@ -27,9 +27,11 @@ export default class Login extends React.Component {
         this.state = {
             country: '',
             countryName: '',
+
             email: '',
             emailPlaceHolder: 'johnsmith@gmail.com',
             emailChange: false,
+            emailFocusShift: false,
 
             password: '',
             passwordPlaceHolder: '\u2B24\u2B24\u2B24\u2B24\u2B24\u2B24\u2B24',
@@ -40,11 +42,15 @@ export default class Login extends React.Component {
     static navigationOptions = {
         headerShown: false
     }
+    handleEmailSubmit = () => {
+        this.setState({ emailFocusShift: true })
+    }
+
     render() {
         return (
             <ScrollView
                 contentContainerStyle={{
-                    flexGrow:1
+                    flexGrow: 1
                 }}
             >
                 <View
@@ -81,6 +87,8 @@ export default class Login extends React.Component {
                             />
                         </View>
                         <Input
+                            blurOnSubmit={false}
+                            onSubmitEditing={() => this.passwordInput.focus()}
                             keyboardType='email-address'
                             onChangeText={text => {
                                 this.setState({
@@ -112,6 +120,7 @@ export default class Login extends React.Component {
                             leftIconContainerStyle={styles.iconContainer}
                         />
                         <Input
+                            ref={(input) => {this.passwordInput = input}}
                             onChangeText={pass => {
                                 this.setState({
                                     passwordChange: true,
@@ -204,9 +213,11 @@ export default class Login extends React.Component {
                         onPress={() => {
                             this.props.navigation.navigate('Signup')
                         }}
+                        style={{
+                            marginTop: 40,
+                        }}
                     >
                         <Text style={{
-                            marginTop: 40,
                             color: colors.green,
                             borderBottomWidth: 1,
                             borderBottomColor: colors.green
@@ -221,7 +232,7 @@ export default class Login extends React.Component {
 
 const styles = StyleSheet.create({
     mainScroller: {
-        marginVertical:10,
+        marginVertical: 10,
 
         flex: 1,
         justifyContent: 'center',
@@ -234,8 +245,8 @@ const styles = StyleSheet.create({
         color: colors.red
     },
     countryPickerContainer: {
-        alignSelf:'center',
-        width:'90%',
+        alignSelf: 'center',
+        width: '90%',
         marginBottom: 15,
         paddingLeft: 12,
         flexDirection: "row",
@@ -244,12 +255,12 @@ const styles = StyleSheet.create({
         backgroundColor: colors.red + '20',
     },
     countryPickerText: {
-        flex:1,
+        flex: 1,
         flexDirection: 'row',
         justifyContent: 'space-between'
     },
     countryText: {
-        marginHorizontal:10,
+        marginHorizontal: 10,
         color: '#00000095',
         fontSize: 16
     },
@@ -257,7 +268,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
         backgroundColor: colors.red + '10',
-        width:70,
+        width: 70,
         height: 50,
     },
     inputContainer: {

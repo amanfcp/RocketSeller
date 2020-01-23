@@ -89,7 +89,7 @@ export default class Login extends React.Component {
                 contentContainerStyle={{ flexGrow: 1 }}
             >
                 <Icon
-                    onPress={()=>this.props.navigation.goBack()}
+                    onPress={() => this.props.navigation.goBack()}
                     iconStyle={{
                         alignSelf: 'flex-start',
                         // position:'absolute',
@@ -203,6 +203,8 @@ export default class Login extends React.Component {
                                 setStoreType={this.setStoreType} />
                         </Modal>
                         <Input
+                            blurOnSubmit={false}
+                            onSubmitEditing={() => this.verifyInput.focus()}
                             keyboardType='phone-pad'
                             onChangeText={text => {
                                 this.setState({
@@ -234,6 +236,9 @@ export default class Login extends React.Component {
                             leftIconContainerStyle={styles.iconContainer}
                         />
                         <Input
+                            ref={(input) => this.verifyInput = input}
+                            onSubmitEditing={() => this.emailInput.focus()}
+                            blurOnSubmit={false}
                             onChangeText={_verify => {
                                 this.setState({
                                     verifyChange: true,
@@ -244,7 +249,7 @@ export default class Login extends React.Component {
                             onBlur={() => {
                                 if (this.state.verifyChange === false || this.state.verifyCode === '') {
                                     this.setState({
-                                        passwordPlaceHolder: '------'
+                                        verifyCodePlaceHolder: '------'
                                     })
                                 }
                             }}
@@ -282,6 +287,9 @@ export default class Login extends React.Component {
                             rightIconContainerStyle={styles.rightIconContainer}
                         />
                         <Input
+                            ref={(input) => this.emailInput = input}
+                            onSubmitEditing={() => this.passwordInput.focus()}
+                            blurOnSubmit={false}
                             keyboardType='email-address'
                             onChangeText={text => {
                                 this.setState({
@@ -313,6 +321,9 @@ export default class Login extends React.Component {
                             leftIconContainerStyle={styles.iconContainer}
                         />
                         <Input
+                            ref={(input) => this.passwordInput = input}
+                            onSubmitEditing={() => this.confirmPasswordInput.focus()}
+                            blurOnSubmit={false}
                             onChangeText={pass => {
                                 this.setState({
                                     passwordChange: true,
@@ -364,6 +375,9 @@ export default class Login extends React.Component {
                             rightIconContainerStyle={styles.rightIconContainer}
                         />
                         <Input
+                            ref={(input) => this.confirmPasswordInput = input}
+                            onSubmitEditing={() => this.shopNameInput.focus()}
+                            blurOnSubmit={false}
                             onChangeText={confPass => {
                                 this.setState({
                                     confirmPasswordChange: true,
@@ -415,6 +429,9 @@ export default class Login extends React.Component {
                             rightIconContainerStyle={styles.rightIconContainer}
                         />
                         <Input
+                            ref={(input) => this.shopNameInput = input}
+                            onSubmitEditing={() => this.promoCodeInput.focus()}
+                            blurOnSubmit={false}
                             keyboardType='default'
                             onChangeText={text => {
                                 this.setState({
@@ -446,6 +463,7 @@ export default class Login extends React.Component {
                             leftIconContainerStyle={styles.iconContainer}
                         />
                         <Input
+                            ref={(input) => this.promoCodeInput = input}
                             keyboardType='default'
                             onChangeText={text => {
                                 this.setState({

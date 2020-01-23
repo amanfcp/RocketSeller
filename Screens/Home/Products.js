@@ -13,7 +13,6 @@ import {
 } from 'react-native-elements'
 import colors from '../../colors/colors'
 import { List } from 'react-native-paper'
-import { Colors } from 'react-native/Libraries/NewAppScreen';
 
 export default class App extends React.Component {
   constructor(props) {

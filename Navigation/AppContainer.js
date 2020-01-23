@@ -16,10 +16,41 @@ import ForgotPassword from '../Screens/Authentication/ForgotPassword'
 import Home from '../Screens/Home/Home'
 import Products from '../Screens/Home/Products'
 import Orders from '../Screens/Home/Orders'
+import AddProduct from '../Screens/Home/AddProduct'
 import Profile from '../Screens/Profile/Profile'
 import About from '../Screens/Profile/About'
 import SellerAccount from '../Screens/Profile/SellerAcount'
 import { TouchableOpacity } from 'react-native-gesture-handler';
+import { TransitionSpecs, HeaderStyleInterpolators } from 'react-navigation-stack';
+
+const MyTransition = {
+    gestureDirection: 'horizontal',
+    transitionSpec: {
+        open: TransitionSpecs.TransitionIOSSpec,
+        close: TransitionSpecs.TransitionIOSSpec,
+    },
+    headerStyleInterpolator: HeaderStyleInterpolators.forFade,
+    cardStyleInterpolator: ({ current, next, layouts }) => {
+        return {
+            cardStyle: {
+                transform: [
+                    {
+                        translateX: current.progress.interpolate({
+                            inputRange: [0, 1],
+                            outputRange: [layouts.screen.width, 0],
+                        }),
+                    },
+                ],
+            },
+            overlayStyle: {
+                opacity: current.progress.interpolate({
+                    inputRange: [0, 1],
+                    outputRange: [0, 0.5],
+                }),
+            },
+        };
+    },
+}
 
 const AuthStack = createStackNavigator({
     Login: {
@@ -32,7 +63,12 @@ const AuthStack = createStackNavigator({
         screen: ForgotPassword,
     },
 }, {
-    initialRouteName: 'Login'
+    initialRouteName: 'Login',
+    defaultNavigationOptions: ({ navigation }) => {
+        return {
+            ...MyTransition,
+        }
+    }
 }
 );
 const HomeStack = createStackNavigator({
@@ -45,10 +81,14 @@ const HomeStack = createStackNavigator({
     Products: {
         screen: Products,
     },
+    AddProduct: {
+        screen: AddProduct,
+    }
 
 }, {
     defaultNavigationOptions: ({ navigation }) => {
         return {
+            ...MyTransition,
             headerTitleStyle: {
                 color: '#fff'
             },
@@ -91,6 +131,7 @@ const ProfileStack = createStackNavigator({
     {
         defaultNavigationOptions: ({ navigation }) => {
             return {
+                ...MyTransition,
                 headerTitleStyle: {
                     color: colors.white,
                 },
