@@ -73,17 +73,7 @@ export default class ForgotPassword extends React.Component {
                     inputStyle={styles.inputFields}
                     containerStyle={styles.inputContainer}
                     inputContainerStyle={{ width: '100%' }}
-                    // label='Email Address'
-                    // labelStyle={styles.label}
                     placeholder={this.state.emailPlaceHolder}
-                // leftIcon={
-                //     <Icon
-                //         type='font-awesome'
-                //         name='envelope-o'
-                //         color={colors.green}
-                //     />
-                // }
-                // leftIconContainerStyle={styles.iconContainer}
                 />
                 <View
                     style={{
@@ -96,6 +86,7 @@ export default class ForgotPassword extends React.Component {
                         onPress={() => {
                             this.props.navigation.navigate('Home')
                         }}
+                        androidRippleColor={colors.white}
                     >
                         <Text
                             style={{
@@ -115,8 +106,6 @@ const styles = {
     main: {
         flex: 1,
         margin: 20,
-        // justifyContent:'center',
-        // alignItems:'center',
     },
     textHead: {
         fontSize: 16,
@@ -132,7 +121,6 @@ const styles = {
         marginBottom: 20,
         marginTop: 20,
         marginLeft: 0,
-        // width:'100%'
     },
     inputFields: {
         textAlign: 'center',

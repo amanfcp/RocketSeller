@@ -120,7 +120,7 @@ export default class Login extends React.Component {
                             leftIconContainerStyle={styles.iconContainer}
                         />
                         <Input
-                            ref={(input) => {this.passwordInput = input}}
+                            ref={(input) => { this.passwordInput = input }}
                             onChangeText={pass => {
                                 this.setState({
                                     passwordChange: true,
@@ -194,10 +194,11 @@ export default class Login extends React.Component {
                             }}
                         >
                             <Button
-                                style={styles.loginButton}
                                 onPress={() => {
                                     this.props.navigation.navigate('drawerNavigator')
                                 }}
+                                style={styles.loginButton}
+                                androidRippleColor={colors.white}
                             >
                                 <Text
                                     style={{

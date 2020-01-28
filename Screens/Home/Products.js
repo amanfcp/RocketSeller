@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState} from 'react';
 import {
   View,
   Text,
@@ -14,25 +14,20 @@ import {
 import colors from '../../colors/colors'
 import { List } from 'react-native-paper'
 
-export default class App extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      sortOpen: false,
-      selectedSort: 'New-Old',
-      newOld: true,
-      oldNew: false,
-      closestExpire: false,
-    }
-  }
+function App() {
+
+  const [sortOpen, setSortOpen] = useState(false)
+  const [selectedSort, setSelectedSort] = useState('New-Old')
+  const [newOld, setNewOld] = useState(true)
+  const [oldNew, setOldNew] = useState(false)
+  const [closestExpire, setClosestExpire] = useState(false)
+
 
   handleSortAccordion = () => {
-    this.setState({
-      sortOpen: !this.state.sortOpen
-    })
+    setSortOpen(!sortOpen)
   }
 
-  static navigationOptions = ({ navigation }) => ({
+  App.navigationOptions = ({ navigation }) => ({
     headerTitleStyle: {
       color: colors.white,
     },
@@ -49,347 +44,400 @@ export default class App extends React.Component {
     ,
     headerRight: () => null,
   })
-  render() {
-    return (
+  return (
 
-      <Tabs
-        tabBarUnderlineStyle={{
-          height: 0,
-        }}
-        renderTabBar={() => <ScrollableTab style={{ borderWidth: 0 }} />}
-      >
-        <Tab
-          activeTextStyle={styles.activeTabText}
-          textStyle={styles.tabText}
-          tabStyle={styles.tabStyle}
-          activeTabStyle={styles.activeTabStyle}
-          heading="All">
-          <List.Accordion
-            style={{
-              backgroundColor: colors.gray + '80'
+    <Tabs
+      tabBarUnderlineStyle={{
+        height: 0,
+      }}
+      renderTabBar={() => <ScrollableTab style={{ borderWidth: 0 }} />}
+    >
+      <Tab
+        activeTextStyle={styles.activeTabText}
+        textStyle={styles.tabText}
+        tabStyle={styles.tabStyle}
+        activeTabStyle={styles.activeTabStyle}
+        heading="All">
+        <List.Accordion
+          style={{
+            backgroundColor: colors.gray + '80'
+          }}
+          expanded={sortOpen}
+          onPress={this.handleSortAccordion}
+          titleStyle={{ color: colors.green }}
+          title={`Sort: ${selectedSort}`}
+        >
+          <List.Item
+            style={
+              newOld ?
+                { backgroundColor: colors.green + '50' }
+                :
+                { backgroundColor: colors.gray + '80' }
+            }
+            onPress={() => {
+              setSelectedSort('New-Old')
+              setOldNew(false)
+              setNewOld(true)
+              setClosestExpire(false)
+              handleSortAccordion()
             }}
-            expanded={this.state.sortOpen}
-            onPress={this.handleSortAccordion}
-            titleStyle={{ color: colors.green }}
-            title={`Sort: ${this.state.selectedSort}`}
-          >
-            <List.Item
-              style={
-                this.state.newOld ?
-                  { backgroundColor: colors.green + '50' }
-                  :
-                  { backgroundColor: colors.gray + '80' }
-              }
-              onPress={() => {
-                this.setState({ selectedSort: 'New-Old', oldNew: false, newOld: true, closestExpire: false })
-                this.handleSortAccordion()
-              }}
-              title="New-Old" />
-            <List.Item
-              style={
-                this.state.oldNew ?
-                  { backgroundColor: colors.green + '50' }
-                  :
-                  { backgroundColor: colors.gray + '80' }
-              }
-              onPress={() => {
-                this.setState({ selectedSort: 'Old-New', oldNew: true, newOld: false, closestExpire: false })
-                this.handleSortAccordion()
-              }}
-              title="Old-New" />
-            <List.Item
-              style={
-                this.state.closestExpire ?
-                  { backgroundColor: colors.green + '50' }
-                  :
-                  { backgroundColor: colors.gray + '80' }
-              }
-              onPress={() => {
-                this.setState({ selectedSort: 'Closest Expire', oldNew: false, newOld: false, closestExpire: true })
-                this.handleSortAccordion()
-              }}
-              title="Closest Expire" />
-          </List.Accordion>
-          <Text>No product Found</Text>
-        </Tab>
-        <Tab
-          activeTextStyle={styles.activeTabText}
-          textStyle={styles.tabText}
-          tabStyle={styles.tabStyle}
-          activeTabStyle={styles.activeTabStyle}
-          heading="Live">
-          <List.Accordion
-            style={{
-              backgroundColor: colors.gray + '80'
+            title="New-Old" />
+          <List.Item
+            style={
+              oldNew ?
+                { backgroundColor: colors.green + '50' }
+                :
+                { backgroundColor: colors.gray + '80' }
+            }
+            onPress={() => {
+              setSelectedSort('Old-New')
+              setOldNew(true)
+              setNewOld(false)
+              setClosestExpire(false)
+              handleSortAccordion()
             }}
-            expanded={this.state.sortOpen}
-            onPress={this.handleSortAccordion}
-            titleStyle={{ color: colors.green }}
-            title={`Sort: ${this.state.selectedSort}`}
-          >
-            <List.Item
-              style={
-                this.state.newOld ?
-                  { backgroundColor: colors.green + '50' }
-                  :
-                  { backgroundColor: colors.gray + '80' }
-              }
-              onPress={() => {
-                this.setState({ selectedSort: 'New-Old', oldNew: false, newOld: true, closestExpire: false })
-                this.handleSortAccordion()
-              }}
-              title="New-Old" />
-            <List.Item
-              style={
-                this.state.oldNew ?
-                  { backgroundColor: colors.green + '50' }
-                  :
-                  { backgroundColor: colors.gray + '80' }
-              }
-              onPress={() => {
-                this.setState({ selectedSort: 'Old-New', oldNew: true, newOld: false, closestExpire: false })
-                this.handleSortAccordion()
-              }}
-              title="Old-New" />
-            <List.Item
-              style={
-                this.state.closestExpire ?
-                  { backgroundColor: colors.green + '50' }
-                  :
-                  { backgroundColor: colors.gray + '80' }
-              }
-              onPress={() => {
-                this.setState({ selectedSort: 'Closest Expire', oldNew: false, newOld: false, closestExpire: true })
-                this.handleSortAccordion()
-              }}
-              title="Closest Expire" />
-          </List.Accordion>
-          <Text>No product Found</Text>
-        </Tab>
-        <Tab
-          activeTextStyle={styles.activeTabText}
-          textStyle={styles.tabText}
-          tabStyle={styles.tabStyle}
-          activeTabStyle={styles.activeTabStyle}
-          heading="Pending">
-          <List.Accordion
-            style={{
-              backgroundColor: colors.gray + '80'
+            title="Old-New" />
+          <List.Item
+            style={
+              closestExpire ?
+                { backgroundColor: colors.green + '50' }
+                :
+                { backgroundColor: colors.gray + '80' }
+            }
+            onPress={() => {
+              setSelectedSort('Closest Expire')
+              setOldNew(false)
+              setNewOld(false)
+              setClosestExpire(true)
+              handleSortAccordion()
             }}
-            expanded={this.state.sortOpen}
-            onPress={this.handleSortAccordion}
-            titleStyle={{ color: colors.green }}
-            title={`Sort: ${this.state.selectedSort}`}
-          >
-            <List.Item
-              style={
-                this.state.newOld ?
-                  { backgroundColor: colors.green + '50' }
-                  :
-                  { backgroundColor: colors.gray + '80' }
-              }
-              onPress={() => {
-                this.setState({ selectedSort: 'New-Old', oldNew: false, newOld: true, closestExpire: false })
-                this.handleSortAccordion()
-              }}
-              title="New-Old" />
-            <List.Item
-              style={
-                this.state.oldNew ?
-                  { backgroundColor: colors.green + '50' }
-                  :
-                  { backgroundColor: colors.gray + '80' }
-              }
-              onPress={() => {
-                this.setState({ selectedSort: 'Old-New', oldNew: true, newOld: false, closestExpire: false })
-                this.handleSortAccordion()
-              }}
-              title="Old-New" />
-            <List.Item
-              style={
-                this.state.closestExpire ?
-                  { backgroundColor: colors.green + '50' }
-                  :
-                  { backgroundColor: colors.gray + '80' }
-              }
-              onPress={() => {
-                this.setState({ selectedSort: 'Closest Expire', oldNew: false, newOld: false, closestExpire: true })
-                this.handleSortAccordion()
-              }}
-              title="Closest Expire" />
-          </List.Accordion>
-          <Text>No product Found</Text>
+            title="Closest Expire" />
+        </List.Accordion>
+        <Text>No product Found</Text>
+      </Tab>
+      <Tab
+        activeTextStyle={styles.activeTabText}
+        textStyle={styles.tabText}
+        tabStyle={styles.tabStyle}
+        activeTabStyle={styles.activeTabStyle}
+        heading="Live">
+        <List.Accordion
+          style={{
+            backgroundColor: colors.gray + '80'
+          }}
+          expanded={sortOpen}
+          onPress={this.handleSortAccordion}
+          titleStyle={{ color: colors.green }}
+          title={`Sort: ${selectedSort}`}
+        >
+          <List.Item
+            style={
+              newOld ?
+                { backgroundColor: colors.green + '50' }
+                :
+                { backgroundColor: colors.gray + '80' }
+            }
+            onPress={() => {
+              setSelectedSort('New-Old')
+              setOldNew(false)
+              setNewOld(true)
+              setClosestExpire(false)
+              handleSortAccordion()
+            }}
+            title="New-Old" />
+          <List.Item
+            style={
+              oldNew ?
+                { backgroundColor: colors.green + '50' }
+                :
+                { backgroundColor: colors.gray + '80' }
+            }
+            onPress={() => {
+              setSelectedSort('Old-New')
+              setOldNew(true)
+              setNewOld(false)
+              setClosestExpire(false)
+              handleSortAccordion()
+            }}
+            title="Old-New" />
+          <List.Item
+            style={
+              closestExpire ?
+                { backgroundColor: colors.green + '50' }
+                :
+                { backgroundColor: colors.gray + '80' }
+            }
+            onPress={() => {
+              setSelectedSort('Closest Expire')
+              setOldNew(false)
+              setNewOld(false)
+              setClosestExpire(true)
+              handleSortAccordion()
+            }}
+            title="Closest Expire" />
+        </List.Accordion>
+        <Text>No product Found</Text>
+      </Tab>
+      <Tab
+        activeTextStyle={styles.activeTabText}
+        textStyle={styles.tabText}
+        tabStyle={styles.tabStyle}
+        activeTabStyle={styles.activeTabStyle}
+        heading="Pending">
+        <List.Accordion
+          style={{
+            backgroundColor: colors.gray + '80'
+          }}
+          expanded={sortOpen}
+          onPress={this.handleSortAccordion}
+          titleStyle={{ color: colors.green }}
+          title={`Sort: ${selectedSort}`}
+        >
+          <List.Item
+            style={
+              newOld ?
+                { backgroundColor: colors.green + '50' }
+                :
+                { backgroundColor: colors.gray + '80' }
+            }
+            onPress={() => {
+              setSelectedSort('New-Old')
+              setOldNew(false)
+              setNewOld(true)
+              setClosestExpire(false)
+              handleSortAccordion()
+            }}
+            title="New-Old" />
+          <List.Item
+            style={
+              oldNew ?
+                { backgroundColor: colors.green + '50' }
+                :
+                { backgroundColor: colors.gray + '80' }
+            }
+            onPress={() => {
+              setSelectedSort('Old-New')
+              setOldNew(true)
+              setNewOld(false)
+              setClosestExpire(false)
+              handleSortAccordion()
+            }}
+            title="Old-New" />
+          <List.Item
+            style={
+              closestExpire ?
+                { backgroundColor: colors.green + '50' }
+                :
+                { backgroundColor: colors.gray + '80' }
+            }
+            onPress={() => {
+              setSelectedSort('Closest Expire')
+              setOldNew(false)
+              setNewOld(false)
+              setClosestExpire(true)
+              handleSortAccordion()
+            }}
+            title="Closest Expire" />
+        </List.Accordion>
+        <Text>No product Found</Text>
 
-        </Tab>
-        <Tab
-          activeTextStyle={styles.activeTabText}
-          textStyle={styles.tabText}
-          activeTabStyle={styles.activeTabStyle}
-          tabStyle={styles.tabStyle}
-          heading="Rejected">
-          <List.Accordion
-            style={{
-              backgroundColor: colors.gray + '80'
+      </Tab>
+      <Tab
+        activeTextStyle={styles.activeTabText}
+        textStyle={styles.tabText}
+        activeTabStyle={styles.activeTabStyle}
+        tabStyle={styles.tabStyle}
+        heading="Rejected">
+        <List.Accordion
+          style={{
+            backgroundColor: colors.gray + '80'
+          }}
+          expanded={sortOpen}
+          onPress={this.handleSortAccordion}
+          titleStyle={{ color: colors.green }}
+          title={`Sort: ${selectedSort}`}
+        >
+          <List.Item
+            style={
+              newOld ?
+                { backgroundColor: colors.green + '50' }
+                :
+                { backgroundColor: colors.gray + '80' }
+            }
+            onPress={() => {
+              setSelectedSort('New-Old')
+              setOldNew(false)
+              setNewOld(true)
+              setClosestExpire(false)
+              handleSortAccordion()
             }}
-            expanded={this.state.sortOpen}
-            onPress={this.handleSortAccordion}
-            titleStyle={{ color: colors.green }}
-            title={`Sort: ${this.state.selectedSort}`}
-          >
-            <List.Item
-              style={
-                this.state.newOld ?
-                  { backgroundColor: colors.green + '50' }
-                  :
-                  { backgroundColor: colors.gray + '80' }
-              }
-              onPress={() => {
-                this.setState({ selectedSort: 'New-Old', oldNew: false, newOld: true, closestExpire: false })
-                this.handleSortAccordion()
-              }}
-              title="New-Old" />
-            <List.Item
-              style={
-                this.state.oldNew ?
-                  { backgroundColor: colors.green + '50' }
-                  :
-                  { backgroundColor: colors.gray + '80' }
-              }
-              onPress={() => {
-                this.setState({ selectedSort: 'Old-New', oldNew: true, newOld: false, closestExpire: false })
-                this.handleSortAccordion()
-              }}
-              title="Old-New" />
-            <List.Item
-              style={
-                this.state.closestExpire ?
-                  { backgroundColor: colors.green + '50' }
-                  :
-                  { backgroundColor: colors.gray + '80' }
-              }
-              onPress={() => {
-                this.setState({ selectedSort: 'Closest Expire', oldNew: false, newOld: false, closestExpire: true })
-                this.handleSortAccordion()
-              }}
-              title="Closest Expire" />
-          </List.Accordion>
-          <Text>No product Found</Text>
-
-        </Tab>
-        <Tab
-          activeTextStyle={styles.activeTabText}
-          textStyle={styles.tabText}
-          activeTabStyle={styles.activeTabStyle}
-          tabStyle={styles.tabStyle}
-          heading="Inactive">
-          <List.Accordion
-            style={{
-              backgroundColor: colors.gray + '80'
+            title="New-Old" />
+          <List.Item
+            style={
+              oldNew ?
+                { backgroundColor: colors.green + '50' }
+                :
+                { backgroundColor: colors.gray + '80' }
+            }
+            onPress={() => {
+              setSelectedSort('Old-New')
+              setOldNew(true)
+              setNewOld(false)
+              setClosestExpire(false)
+              handleSortAccordion()
             }}
-            expanded={this.state.sortOpen}
-            onPress={this.handleSortAccordion}
-            titleStyle={{ color: colors.green }}
-            title={`Sort: ${this.state.selectedSort}`}
-          >
-            <List.Item
-              style={
-                this.state.newOld ?
-                  { backgroundColor: colors.green + '50' }
-                  :
-                  { backgroundColor: colors.gray + '80' }
-              }
-              onPress={() => {
-                this.setState({ selectedSort: 'New-Old', oldNew: false, newOld: true, closestExpire: false })
-                this.handleSortAccordion()
-              }}
-              title="New-Old" />
-            <List.Item
-              style={
-                this.state.oldNew ?
-                  { backgroundColor: colors.green + '50' }
-                  :
-                  { backgroundColor: colors.gray + '80' }
-              }
-              onPress={() => {
-                this.setState({ selectedSort: 'Old-New', oldNew: true, newOld: false, closestExpire: false })
-                this.handleSortAccordion()
-              }}
-              title="Old-New" />
-            <List.Item
-              style={
-                this.state.closestExpire ?
-                  { backgroundColor: colors.green + '50' }
-                  :
-                  { backgroundColor: colors.gray + '80' }
-              }
-              onPress={() => {
-                this.setState({ selectedSort: 'Closest Expire', oldNew: false, newOld: false, closestExpire: true })
-                this.handleSortAccordion()
-              }}
-              title="Closest Expire" />
-          </List.Accordion>
-          <Text>No product Found</Text>
-
-        </Tab>
-        <Tab
-          activeTextStyle={styles.activeTabText}
-          textStyle={styles.tabText}
-          activeTabStyle={styles.activeTabStyle}
-          tabStyle={styles.tabStyle}
-          heading="Policy Violation">
-          <List.Accordion
-            style={{
-              backgroundColor: colors.gray + '80'
+            title="Old-New" />
+          <List.Item
+            style={
+              closestExpire ?
+                { backgroundColor: colors.green + '50' }
+                :
+                { backgroundColor: colors.gray + '80' }
+            }
+            onPress={() => {
+              setSelectedSort('Closest Expire')
+              setOldNew(false)
+              setNewOld(false)
+              setClosestExpire(true)
+              handleSortAccordion()
             }}
-            expanded={this.state.sortOpen}
-            onPress={this.handleSortAccordion}
-            titleStyle={{ color: colors.green }}
-            title={`Sort: ${this.state.selectedSort}`}
-          >
-            <List.Item
-              style={
-                this.state.newOld ?
-                  { backgroundColor: colors.green + '50' }
-                  :
-                  { backgroundColor: colors.gray + '80' }
-              }
-              onPress={() => {
-                this.setState({ selectedSort: 'New-Old', oldNew: false, newOld: true, closestExpire: false })
-                this.handleSortAccordion()
-              }}
-              title="New-Old" />
-            <List.Item
-              style={
-                this.state.oldNew ?
-                  { backgroundColor: colors.green + '50' }
-                  :
-                  { backgroundColor: colors.gray + '80' }
-              }
-              onPress={() => {
-                this.setState({ selectedSort: 'Old-New', oldNew: true, newOld: false, closestExpire: false })
-                this.handleSortAccordion()
-              }}
-              title="Old-New" />
-            <List.Item
-              style={
-                this.state.closestExpire ?
-                  { backgroundColor: colors.green + '50' }
-                  :
-                  { backgroundColor: colors.gray + '80' }
-              }
-              onPress={() => {
-                this.setState({ selectedSort: 'Closest Expire', oldNew: false, newOld: false, closestExpire: true })
-                this.handleSortAccordion()
-              }}
-              title="Closest Expire" />
-          </List.Accordion>
-          <Text>No product Found</Text>
+            title="Closest Expire" />
+        </List.Accordion>
+        <Text>No product Found</Text>
 
-        </Tab>
-      </Tabs>
-    );
-  }
-};
+      </Tab>
+      <Tab
+        activeTextStyle={styles.activeTabText}
+        textStyle={styles.tabText}
+        activeTabStyle={styles.activeTabStyle}
+        tabStyle={styles.tabStyle}
+        heading="Inactive">
+        <List.Accordion
+          style={{
+            backgroundColor: colors.gray + '80'
+          }}
+          expanded={sortOpen}
+          onPress={this.handleSortAccordion}
+          titleStyle={{ color: colors.green }}
+          title={`Sort: ${selectedSort}`}
+        >
+          <List.Item
+            style={
+              newOld ?
+                { backgroundColor: colors.green + '50' }
+                :
+                { backgroundColor: colors.gray + '80' }
+            }
+            onPress={() => {
+              setSelectedSort('New-Old')
+              setOldNew(false)
+              setNewOld(true)
+              setClosestExpire(false)
+              handleSortAccordion()
+            }}
+            title="New-Old" />
+          <List.Item
+            style={
+              oldNew ?
+                { backgroundColor: colors.green + '50' }
+                :
+                { backgroundColor: colors.gray + '80' }
+            }
+            onPress={() => {
+              setSelectedSort('Old-New')
+              setOldNew(true)
+              setNewOld(false)
+              setClosestExpire(false)
+              handleSortAccordion()
+            }}
+            title="Old-New" />
+          <List.Item
+            style={
+              closestExpire ?
+                { backgroundColor: colors.green + '50' }
+                :
+                { backgroundColor: colors.gray + '80' }
+            }
+            onPress={() => {
+              setSelectedSort('Closest Expire')
+              setOldNew(false)
+              setNewOld(false)
+              setClosestExpire(true)
+              handleSortAccordion()
+            }}
+            title="Closest Expire" />
+        </List.Accordion>
+        <Text>No product Found</Text>
+
+      </Tab>
+      <Tab
+        activeTextStyle={styles.activeTabText}
+        textStyle={styles.tabText}
+        activeTabStyle={styles.activeTabStyle}
+        tabStyle={styles.tabStyle}
+        heading="Policy Violation">
+        <List.Accordion
+          style={{
+            backgroundColor: colors.gray + '80'
+          }}
+          expanded={sortOpen}
+          onPress={this.handleSortAccordion}
+          titleStyle={{ color: colors.green }}
+          title={`Sort: ${selectedSort}`}
+        >
+          <List.Item
+            style={
+              newOld ?
+                { backgroundColor: colors.green + '50' }
+                :
+                { backgroundColor: colors.gray + '80' }
+            }
+            onPress={() => {
+              setSelectedSort('New-Old')
+              setOldNew(false)
+              setNewOld(true)
+              setClosestExpire(false)
+              handleSortAccordion()
+            }}
+            title="New-Old" />
+          <List.Item
+            style={
+              oldNew ?
+                { backgroundColor: colors.green + '50' }
+                :
+                { backgroundColor: colors.gray + '80' }
+            }
+            onPress={() => {
+              setSelectedSort('Old-New')
+              setOldNew(true)
+              setNewOld(false)
+              setClosestExpire(false)
+              handleSortAccordion()
+            }}
+            title="Old-New" />
+          <List.Item
+            style={
+              closestExpire ?
+                { backgroundColor: colors.green + '50' }
+                :
+                { backgroundColor: colors.gray + '80' }
+            }
+            onPress={() => {
+              setSelectedSort('Closest Expire')
+              setOldNew(false)
+              setNewOld(false)
+              setClosestExpire(true)
+              handleSortAccordion()
+            }}
+            title="Closest Expire" />
+        </List.Accordion>
+        <Text>No product Found</Text>
+
+      </Tab>
+    </Tabs>
+  );
+}
+
 
 const styles = {
   tabStyle: {
@@ -406,3 +454,5 @@ const styles = {
     color: colors.white,
   }
 }
+
+export default App;
