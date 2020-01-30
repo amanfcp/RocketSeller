@@ -1,7 +1,8 @@
-import React, { useState} from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
+  FlatList,
 } from 'react-native';
 import {
   Tab,
@@ -13,6 +14,8 @@ import {
 } from 'react-native-elements'
 import colors from '../../colors/colors'
 import { List } from 'react-native-paper'
+import Axios from 'axios';
+import { Apis, header } from '../../Apis/api'
 
 function App() {
 
@@ -21,9 +24,20 @@ function App() {
   const [newOld, setNewOld] = useState(true)
   const [oldNew, setOldNew] = useState(false)
   const [closestExpire, setClosestExpire] = useState(false)
+  const [products, setProducts] = useState([])
 
+  const getProducts = async () => {
+    await Axios.get(Apis.Products + `?customer_id=${2}&searchCriteria[pageSize]=${3}`, { headers: header }).then(res => {
+      setProducts(res.data.items)
+      //console.warn(products)
+    })
+  }
 
-  handleSortAccordion = () => {
+  useEffect(() => {
+    getProducts()
+  }, [])
+
+  const handleSortAccordion = () => {
     setSortOpen(!sortOpen)
   }
 
@@ -63,7 +77,7 @@ function App() {
             backgroundColor: colors.gray + '80'
           }}
           expanded={sortOpen}
-          onPress={this.handleSortAccordion}
+          onPress={handleSortAccordion}
           titleStyle={{ color: colors.green }}
           title={`Sort: ${selectedSort}`}
         >
@@ -113,7 +127,29 @@ function App() {
             }}
             title="Closest Expire" />
         </List.Accordion>
-        <Text>No product Found</Text>
+        {/* <Text>No product Found</Text> */}
+        <FlatList
+          data={products}
+          renderItem={({ item }) => (
+            <View
+              style={{
+                justifyContent:'center',
+                alignItems:'center',
+                backgroundColor: colors.lightRed,
+                marginVertical: 5,
+              }}
+            >
+              <Text
+                style={{
+                  color: colors.white
+                }}
+              >
+                {item.name}
+              </Text>
+            </View>
+          )}
+        />
+
       </Tab>
       <Tab
         activeTextStyle={styles.activeTabText}
@@ -126,7 +162,7 @@ function App() {
             backgroundColor: colors.gray + '80'
           }}
           expanded={sortOpen}
-          onPress={this.handleSortAccordion}
+          onPress={handleSortAccordion}
           titleStyle={{ color: colors.green }}
           title={`Sort: ${selectedSort}`}
         >
@@ -189,7 +225,7 @@ function App() {
             backgroundColor: colors.gray + '80'
           }}
           expanded={sortOpen}
-          onPress={this.handleSortAccordion}
+          onPress={handleSortAccordion}
           titleStyle={{ color: colors.green }}
           title={`Sort: ${selectedSort}`}
         >
@@ -253,7 +289,7 @@ function App() {
             backgroundColor: colors.gray + '80'
           }}
           expanded={sortOpen}
-          onPress={this.handleSortAccordion}
+          onPress={handleSortAccordion}
           titleStyle={{ color: colors.green }}
           title={`Sort: ${selectedSort}`}
         >
@@ -317,7 +353,7 @@ function App() {
             backgroundColor: colors.gray + '80'
           }}
           expanded={sortOpen}
-          onPress={this.handleSortAccordion}
+          onPress={handleSortAccordion}
           titleStyle={{ color: colors.green }}
           title={`Sort: ${selectedSort}`}
         >
@@ -381,7 +417,7 @@ function App() {
             backgroundColor: colors.gray + '80'
           }}
           expanded={sortOpen}
-          onPress={this.handleSortAccordion}
+          onPress={handleSortAccordion}
           titleStyle={{ color: colors.green }}
           title={`Sort: ${selectedSort}`}
         >

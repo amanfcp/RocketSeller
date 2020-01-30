@@ -5,16 +5,13 @@ import {
   Text,
 } from 'react-native';
 
-
-export default class App extends React.Component {
-  render() {
-    return (
-        <View>
-            <Text>TESTING</Text>
-            </View>
-    );
-  }
+export default function App() {
+  return (
+    <View>
+    </View>
+  );
 };
 
-const styles ={
-}
+const styles = StyleSheet.create({
+
+});
