@@ -23,6 +23,7 @@ import LangModal from '../../Components/LanguageModal'
 import StoreTypeModal from '../../Components/StoreTypeModal'
 
 import CountryPicker from 'react-native-country-picker-modal'
+import { TouchableRipple } from 'react-native-paper';
 
 
 export default class Login extends React.Component {
@@ -105,7 +106,7 @@ export default class Login extends React.Component {
                     <Text
                         style={styles.title}
                     >
-                        Signup
+                        Create an Account
                 </Text>
 
                     <Form
@@ -230,7 +231,7 @@ export default class Login extends React.Component {
                                 <Icon
                                     type='font-awesome'
                                     name='phone'
-                                    color={colors.green}
+                                    color={colors.lightBlue}
                                 />
                             }
                             leftIconContainerStyle={styles.iconContainer}
@@ -263,28 +264,31 @@ export default class Login extends React.Component {
                                 <Icon
                                     type='material'
                                     name='sms'
-                                    color={colors.green}
+                                    color={colors.lightBlue}
                                 />}
                             leftIconContainerStyle={styles.iconContainer}
                             rightIcon={
 
-                                <Button
+                                <TouchableRipple
                                     onPress={() => {
                                         Alert.alert('GOT CODE')
                                     }}
                                     small={true}
                                     style={{
+                                        alignItems:'center',
+                                        justifyContent:'center',
+                                        padding:5,
                                         backgroundColor: colors.white,
-                                        padding: 3
+                                        backgroundColor: colors.gray + '40'
                                     }}
                                 >
                                     <Text
                                         style={{
+                                            color: colors.black + '77'
                                         }}
                                     >Get Code</Text>
-                                </Button>
+                                </TouchableRipple>
                             }
-                            rightIconContainerStyle={styles.rightIconContainer}
                         />
                         <Input
                             ref={(input) => this.emailInput = input}
@@ -315,7 +319,7 @@ export default class Login extends React.Component {
                                 <Icon
                                     type='font-awesome'
                                     name='envelope-o'
-                                    color={colors.green}
+                                    color={colors.lightBlue}
                                 />
                             }
                             leftIconContainerStyle={styles.iconContainer}
@@ -349,7 +353,7 @@ export default class Login extends React.Component {
                                 <Icon
                                     type='material-community'
                                     name='lock'
-                                    color={colors.green}
+                                    color={colors.lightBlue}
                                 />}
                             leftIconContainerStyle={styles.iconContainer}
                             rightIcon={
@@ -403,7 +407,7 @@ export default class Login extends React.Component {
                                 <Icon
                                     type='material-community'
                                     name='lock-alert'
-                                    color={colors.green}
+                                    color={colors.lightBlue}
                                 />}
                             leftIconContainerStyle={styles.iconContainer}
                             rightIcon={
@@ -457,7 +461,7 @@ export default class Login extends React.Component {
                                 <Icon
                                     type='entypo'
                                     name='shop'
-                                    color={colors.green}
+                                    color={colors.lightBlue}
                                 />
                             }
                             leftIconContainerStyle={styles.iconContainer}
@@ -489,7 +493,7 @@ export default class Login extends React.Component {
                                 <Icon
                                     type='material-community'
                                     name='ticket'
-                                    color={colors.green}
+                                    color={colors.lightBlue}
                                 />
                             }
                             leftIconContainerStyle={styles.iconContainer}
@@ -506,7 +510,7 @@ export default class Login extends React.Component {
                                 onPress={() => {
                                     this.props.navigation.navigate('Home')
                                 }}
-                                androidRippleColor={colors.white}   
+                                androidRippleColor={colors.white}
                             >
                                 <Text
                                     style={{
@@ -535,7 +539,7 @@ const styles = StyleSheet.create({
         fontSize: 28,
         marginBottom: 50,
         fontWeight: 'bold',
-        color: colors.red
+        color: colors.blue
     },
     countryPickerContainer: {
         alignSelf: 'center',
@@ -545,7 +549,9 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         justifyContent: 'space-between',
         alignItems: 'center',
-        backgroundColor: colors.red + '20',
+        borderBottomWidth: 1,
+        borderBottomColor: colors.blue
+        // backgroundColor: colors.white + '20',
     },
     countryPickerText: {
         flex: 1,
@@ -560,7 +566,7 @@ const styles = StyleSheet.create({
     countryPicker: {
         alignItems: 'center',
         justifyContent: 'center',
-        backgroundColor: colors.red + '10',
+        // backgroundColor: colors.red + '10',
         width: 70,
         height: 50,
     },
@@ -573,7 +579,7 @@ const styles = StyleSheet.create({
         paddingHorizontal: 10,
         alignItems: 'center',
         justifyContent: 'center',
-        backgroundColor: colors.red + '10',
+        // backgroundColor: colors.red + '10',
         width: '20%',
         height: 50,
     },
@@ -593,7 +599,7 @@ const styles = StyleSheet.create({
         fontFamily: 'arial',
         fontSize: 14,
         marginLeft: 60,
-        color: colors.green
+        color: colors.lightBlue
     },
     iconContainer: {
         paddingRight: 10,
@@ -605,7 +611,7 @@ const styles = StyleSheet.create({
     },
     loginButton: {
         borderRadius: 8,
-        backgroundColor: colors.red,
+        backgroundColor: colors.blue,
         elevation: 0,
         height: 60,
         width: '90%',

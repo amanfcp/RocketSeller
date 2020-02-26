@@ -3,7 +3,6 @@ import { createDrawerNavigator, DrawerItems } from 'react-navigation-drawer';
 import React from 'react';
 import colors from '../colors/colors'
 import { createStackNavigator } from 'react-navigation-stack';
-import { createBottomTabNavigator, createMaterialTopTabNavigator } from 'react-navigation-tabs'
 import {
     View,
     Text,
@@ -20,7 +19,7 @@ import AddProduct from '../Screens/Home/AddProduct'
 import Profile from '../Screens/Profile/Profile'
 import About from '../Screens/Profile/About'
 import SellerAccount from '../Screens/Profile/SellerAcount'
-import { TouchableOpacity } from 'react-native-gesture-handler';
+import Testing from '../Screens/Home/Testing'
 import { TransitionSpecs, HeaderStyleInterpolators } from 'react-navigation-stack';
 
 const MyTransition = {
@@ -83,6 +82,9 @@ const HomeStack = createStackNavigator({
     },
     AddProduct: {
         screen: AddProduct,
+    },
+    Testing: {
+        screen: Testing,
     }
 
 }, {
@@ -93,25 +95,11 @@ const HomeStack = createStackNavigator({
                 color: '#fff'
             },
             headerStyle: {
-                backgroundColor: colors.red
+                backgroundColor: colors.blue
             },
             headerLeft: () =>
                 <Icon iconStyle={{ padding: 10, color: '#fff' }} name='ios-menu' type='ionicon' onPress={() => navigation.toggleDrawer()} />
             ,
-            headerRight: () =>
-                <TouchableOpacity
-                    onPress={() => navigation.navigate('ProfileStack')}
-                >
-                    <Image
-                        source={require('../Images/shopIcon.png')}
-                        style={{
-                            width: 40,
-                            height: 40,
-                            borderRadius: 100,
-                            marginRight: 10,
-                        }}
-                    />
-                </TouchableOpacity>
         }
     }
 }
@@ -136,7 +124,7 @@ const ProfileStack = createStackNavigator({
                     color: colors.white,
                 },
                 headerStyle: {
-                    backgroundColor: colors.red
+                    backgroundColor: colors.blue
                 },
                 headerLeft: () =>
                     <Icon
@@ -158,7 +146,7 @@ const DrawerComponent = (props) => {
                     height: 200,
                     justifyContent: "center",
                     alignItems: "center",
-                    backgroundColor: colors.red
+                    backgroundColor: colors.blue
                 }}
             >
                 <Image
@@ -214,29 +202,24 @@ const DrawerComponent = (props) => {
                 </View>
             </View>
             <DrawerItems
-                activeTintColor={colors.red}
+                activeTintColor={colors.lightBlue}
                 {...props} />
         </View>);
 }
 const homeNavigator = createDrawerNavigator({
+
     Home: {
-        screen: HomeStack,
-    },
-    Feedback: {
-        screen: HomeStack,
-    },
-    About: {
-        screen: HomeStack,
-    },
-    Logout: {
         screen: HomeStack,
     },
     ProfileStack: {
         screen: ProfileStack,
         navigationOptions: {
-            drawerLabel: () => null
+            drawerLabel: 'Account'
         }
-    }
+    },
+    Logout: {
+        screen: AuthStack,
+    },
 }, {
     contentComponent: DrawerComponent
 

@@ -3,19 +3,19 @@ import {
   View,
   Text,
   FlatList,
+  Image,
+  StyleSheet,
+  Easing,
 } from 'react-native';
-import {
-  Tab,
-  Tabs,
-  ScrollableTab
-} from 'native-base';
 import {
   Icon
 } from 'react-native-elements'
 import colors from '../../colors/colors'
-import { List } from 'react-native-paper'
+import Modal from 'react-native-modal'
+import { List, TouchableRipple } from 'react-native-paper'
 import Axios from 'axios';
 import { Apis, header } from '../../Apis/api'
+import { MaterialIndicator } from 'react-native-indicators';
 
 function App() {
 
@@ -24,29 +24,37 @@ function App() {
   const [newOld, setNewOld] = useState(true)
   const [oldNew, setOldNew] = useState(false)
   const [closestExpire, setClosestExpire] = useState(false)
+  const [page, setPage] = useState(1);
   const [products, setProducts] = useState([])
+  const [totalProducts, setTotalProducts] = useState(0)
+  const [listLoader, setListLoader] = useState(false)
+  const [openBottomDrawer, setOpenBottomDrawer] = useState(false)
+  const [refreshing, setRefreshing] = useState(false)
 
   const getProducts = async () => {
-    await Axios.get(Apis.Products + `?customer_id=${2}&searchCriteria[pageSize]=${3}`, { headers: header }).then(res => {
-      setProducts(res.data.items)
-      //console.warn(products)
+    setListLoader(true)
+    await Axios.get(Apis.Products + `?customer_id=${global.customer_id}&searchCriteria[pageSize]=${20}&searchCriteria[currentPage]=${page}`, { headers: header }).then(res => {
+    
+      setProducts([...products, ...res.data.items]);
+      setTotalProducts(res.data.total_count)
+      setRefreshing(false)
     })
   }
 
   useEffect(() => {
     getProducts()
-  }, [])
+  }, [page]);
 
-  const handleSortAccordion = () => {
-    setSortOpen(!sortOpen)
-  }
+  // const handleSortAccordion = () => {
+  //   setSortOpen(!sortOpen)
+  // }
 
   App.navigationOptions = ({ navigation }) => ({
     headerTitleStyle: {
       color: colors.white,
     },
     headerStyle: {
-      backgroundColor: colors.red
+      backgroundColor: colors.blue
     },
     headerLeft: () =>
       <Icon
@@ -58,437 +66,198 @@ function App() {
     ,
     headerRight: () => null,
   })
-  return (
 
-    <Tabs
-      tabBarUnderlineStyle={{
-        height: 0,
-      }}
-      renderTabBar={() => <ScrollableTab style={{ borderWidth: 0 }} />}
+  const loadMoreProducts = () => {
+    if (totalProducts < products.length) {
+      setListLoader(true)
+      setTimeout(() => {
+        setPage(page + 1)
+        setListLoader(false)
+      }, 1000);
+    }
+    else {
+      setListLoader(false)
+    }
+  }
+
+  const onRefresh = ()=>{
+    
+    setRefreshing(true)
+    setProducts([])
+    getProducts()
+  }
+
+  return (
+    <View
+      style={styles.main}
     >
-      <Tab
-        activeTextStyle={styles.activeTabText}
-        textStyle={styles.tabText}
-        tabStyle={styles.tabStyle}
-        activeTabStyle={styles.activeTabStyle}
-        heading="All">
-        <List.Accordion
-          style={{
-            backgroundColor: colors.gray + '80'
-          }}
-          expanded={sortOpen}
-          onPress={handleSortAccordion}
-          titleStyle={{ color: colors.green }}
-          title={`Sort: ${selectedSort}`}
-        >
-          <List.Item
-            style={
-              newOld ?
-                { backgroundColor: colors.green + '50' }
-                :
-                { backgroundColor: colors.gray + '80' }
-            }
-            onPress={() => {
-              setSelectedSort('New-Old')
-              setOldNew(false)
-              setNewOld(true)
-              setClosestExpire(false)
-              handleSortAccordion()
-            }}
-            title="New-Old" />
-          <List.Item
-            style={
-              oldNew ?
-                { backgroundColor: colors.green + '50' }
-                :
-                { backgroundColor: colors.gray + '80' }
-            }
-            onPress={() => {
-              setSelectedSort('Old-New')
-              setOldNew(true)
-              setNewOld(false)
-              setClosestExpire(false)
-              handleSortAccordion()
-            }}
-            title="Old-New" />
-          <List.Item
-            style={
-              closestExpire ?
-                { backgroundColor: colors.green + '50' }
-                :
-                { backgroundColor: colors.gray + '80' }
-            }
-            onPress={() => {
-              setSelectedSort('Closest Expire')
-              setOldNew(false)
-              setNewOld(false)
-              setClosestExpire(true)
-              handleSortAccordion()
-            }}
-            title="Closest Expire" />
-        </List.Accordion>
-        {/* <Text>No product Found</Text> */}
-        <FlatList
-          data={products}
-          renderItem={({ item }) => (
+
+      <FlatList
+        refreshing={refreshing}
+        onRefresh={onRefresh}
+        data={products}
+        onEndReached={loadMoreProducts}
+        ListFooterComponent={
+          listLoader && products.length <= totalProducts ?
             <View
               style={{
-                justifyContent:'center',
-                alignItems:'center',
-                backgroundColor: colors.lightRed,
-                marginVertical: 5,
+                margin: 10,
               }}
             >
-              <Text
+              <MaterialIndicator
+                animationEasing={Easing.linear}
+                size={20}
+                color={colors.black}
+              />
+            </View> : null
+        }
+        renderItem={({ item }) => (
+          <TouchableRipple
+            onPress={() => setOpenBottomDrawer(true)}
+            style={{
+              backgroundColor: colors.white,
+              marginVertical: 3,
+              marginHorizontal: 6,
+              // borderWidth: 0.7,
+              // borderColor: colors.textGray,
+            }}
+          >
+            <View
+              style={{
+                flexDirection: 'row',
+              }}
+            >
+              <Image
+                source={{ uri: "https://rocket.pk/media/catalog/product" + item.custom_attributes[1].value }}
+                resizeMode='contain'
                 style={{
-                  color: colors.white
+                  width: 100,
+                  height: 100
+                }}
+              />
+              <View
+                style={{
+                  justifyContent: 'center',
                 }}
               >
-                {item.name}
-              </Text>
+                <Text>{item.name}</Text>
+                <Text>{item.sku}</Text>
+                <Text>{item.price}</Text>
+                <Text>{item.qty}</Text>
+              </View>
             </View>
-          )}
-        />
-
-      </Tab>
-      <Tab
-        activeTextStyle={styles.activeTabText}
-        textStyle={styles.tabText}
-        tabStyle={styles.tabStyle}
-        activeTabStyle={styles.activeTabStyle}
-        heading="Live">
-        <List.Accordion
-          style={{
-            backgroundColor: colors.gray + '80'
-          }}
-          expanded={sortOpen}
-          onPress={handleSortAccordion}
-          titleStyle={{ color: colors.green }}
-          title={`Sort: ${selectedSort}`}
-        >
-          <List.Item
-            style={
-              newOld ?
-                { backgroundColor: colors.green + '50' }
-                :
-                { backgroundColor: colors.gray + '80' }
-            }
-            onPress={() => {
-              setSelectedSort('New-Old')
-              setOldNew(false)
-              setNewOld(true)
-              setClosestExpire(false)
-              handleSortAccordion()
-            }}
-            title="New-Old" />
-          <List.Item
-            style={
-              oldNew ?
-                { backgroundColor: colors.green + '50' }
-                :
-                { backgroundColor: colors.gray + '80' }
-            }
-            onPress={() => {
-              setSelectedSort('Old-New')
-              setOldNew(true)
-              setNewOld(false)
-              setClosestExpire(false)
-              handleSortAccordion()
-            }}
-            title="Old-New" />
-          <List.Item
-            style={
-              closestExpire ?
-                { backgroundColor: colors.green + '50' }
-                :
-                { backgroundColor: colors.gray + '80' }
-            }
-            onPress={() => {
-              setSelectedSort('Closest Expire')
-              setOldNew(false)
-              setNewOld(false)
-              setClosestExpire(true)
-              handleSortAccordion()
-            }}
-            title="Closest Expire" />
-        </List.Accordion>
-        <Text>No product Found</Text>
-      </Tab>
-      <Tab
-        activeTextStyle={styles.activeTabText}
-        textStyle={styles.tabText}
-        tabStyle={styles.tabStyle}
-        activeTabStyle={styles.activeTabStyle}
-        heading="Pending">
-        <List.Accordion
-          style={{
-            backgroundColor: colors.gray + '80'
-          }}
-          expanded={sortOpen}
-          onPress={handleSortAccordion}
-          titleStyle={{ color: colors.green }}
-          title={`Sort: ${selectedSort}`}
-        >
-          <List.Item
-            style={
-              newOld ?
-                { backgroundColor: colors.green + '50' }
-                :
-                { backgroundColor: colors.gray + '80' }
-            }
-            onPress={() => {
-              setSelectedSort('New-Old')
-              setOldNew(false)
-              setNewOld(true)
-              setClosestExpire(false)
-              handleSortAccordion()
-            }}
-            title="New-Old" />
-          <List.Item
-            style={
-              oldNew ?
-                { backgroundColor: colors.green + '50' }
-                :
-                { backgroundColor: colors.gray + '80' }
-            }
-            onPress={() => {
-              setSelectedSort('Old-New')
-              setOldNew(true)
-              setNewOld(false)
-              setClosestExpire(false)
-              handleSortAccordion()
-            }}
-            title="Old-New" />
-          <List.Item
-            style={
-              closestExpire ?
-                { backgroundColor: colors.green + '50' }
-                :
-                { backgroundColor: colors.gray + '80' }
-            }
-            onPress={() => {
-              setSelectedSort('Closest Expire')
-              setOldNew(false)
-              setNewOld(false)
-              setClosestExpire(true)
-              handleSortAccordion()
-            }}
-            title="Closest Expire" />
-        </List.Accordion>
-        <Text>No product Found</Text>
-
-      </Tab>
-      <Tab
-        activeTextStyle={styles.activeTabText}
-        textStyle={styles.tabText}
-        activeTabStyle={styles.activeTabStyle}
-        tabStyle={styles.tabStyle}
-        heading="Rejected">
-        <List.Accordion
-          style={{
-            backgroundColor: colors.gray + '80'
-          }}
-          expanded={sortOpen}
-          onPress={handleSortAccordion}
-          titleStyle={{ color: colors.green }}
-          title={`Sort: ${selectedSort}`}
-        >
-          <List.Item
-            style={
-              newOld ?
-                { backgroundColor: colors.green + '50' }
-                :
-                { backgroundColor: colors.gray + '80' }
-            }
-            onPress={() => {
-              setSelectedSort('New-Old')
-              setOldNew(false)
-              setNewOld(true)
-              setClosestExpire(false)
-              handleSortAccordion()
-            }}
-            title="New-Old" />
-          <List.Item
-            style={
-              oldNew ?
-                { backgroundColor: colors.green + '50' }
-                :
-                { backgroundColor: colors.gray + '80' }
-            }
-            onPress={() => {
-              setSelectedSort('Old-New')
-              setOldNew(true)
-              setNewOld(false)
-              setClosestExpire(false)
-              handleSortAccordion()
-            }}
-            title="Old-New" />
-          <List.Item
-            style={
-              closestExpire ?
-                { backgroundColor: colors.green + '50' }
-                :
-                { backgroundColor: colors.gray + '80' }
-            }
-            onPress={() => {
-              setSelectedSort('Closest Expire')
-              setOldNew(false)
-              setNewOld(false)
-              setClosestExpire(true)
-              handleSortAccordion()
-            }}
-            title="Closest Expire" />
-        </List.Accordion>
-        <Text>No product Found</Text>
-
-      </Tab>
-      <Tab
-        activeTextStyle={styles.activeTabText}
-        textStyle={styles.tabText}
-        activeTabStyle={styles.activeTabStyle}
-        tabStyle={styles.tabStyle}
-        heading="Inactive">
-        <List.Accordion
-          style={{
-            backgroundColor: colors.gray + '80'
-          }}
-          expanded={sortOpen}
-          onPress={handleSortAccordion}
-          titleStyle={{ color: colors.green }}
-          title={`Sort: ${selectedSort}`}
-        >
-          <List.Item
-            style={
-              newOld ?
-                { backgroundColor: colors.green + '50' }
-                :
-                { backgroundColor: colors.gray + '80' }
-            }
-            onPress={() => {
-              setSelectedSort('New-Old')
-              setOldNew(false)
-              setNewOld(true)
-              setClosestExpire(false)
-              handleSortAccordion()
-            }}
-            title="New-Old" />
-          <List.Item
-            style={
-              oldNew ?
-                { backgroundColor: colors.green + '50' }
-                :
-                { backgroundColor: colors.gray + '80' }
-            }
-            onPress={() => {
-              setSelectedSort('Old-New')
-              setOldNew(true)
-              setNewOld(false)
-              setClosestExpire(false)
-              handleSortAccordion()
-            }}
-            title="Old-New" />
-          <List.Item
-            style={
-              closestExpire ?
-                { backgroundColor: colors.green + '50' }
-                :
-                { backgroundColor: colors.gray + '80' }
-            }
-            onPress={() => {
-              setSelectedSort('Closest Expire')
-              setOldNew(false)
-              setNewOld(false)
-              setClosestExpire(true)
-              handleSortAccordion()
-            }}
-            title="Closest Expire" />
-        </List.Accordion>
-        <Text>No product Found</Text>
-
-      </Tab>
-      <Tab
-        activeTextStyle={styles.activeTabText}
-        textStyle={styles.tabText}
-        activeTabStyle={styles.activeTabStyle}
-        tabStyle={styles.tabStyle}
-        heading="Policy Violation">
-        <List.Accordion
-          style={{
-            backgroundColor: colors.gray + '80'
-          }}
-          expanded={sortOpen}
-          onPress={handleSortAccordion}
-          titleStyle={{ color: colors.green }}
-          title={`Sort: ${selectedSort}`}
-        >
-          <List.Item
-            style={
-              newOld ?
-                { backgroundColor: colors.green + '50' }
-                :
-                { backgroundColor: colors.gray + '80' }
-            }
-            onPress={() => {
-              setSelectedSort('New-Old')
-              setOldNew(false)
-              setNewOld(true)
-              setClosestExpire(false)
-              handleSortAccordion()
-            }}
-            title="New-Old" />
-          <List.Item
-            style={
-              oldNew ?
-                { backgroundColor: colors.green + '50' }
-                :
-                { backgroundColor: colors.gray + '80' }
-            }
-            onPress={() => {
-              setSelectedSort('Old-New')
-              setOldNew(true)
-              setNewOld(false)
-              setClosestExpire(false)
-              handleSortAccordion()
-            }}
-            title="Old-New" />
-          <List.Item
-            style={
-              closestExpire ?
-                { backgroundColor: colors.green + '50' }
-                :
-                { backgroundColor: colors.gray + '80' }
-            }
-            onPress={() => {
-              setSelectedSort('Closest Expire')
-              setOldNew(false)
-              setNewOld(false)
-              setClosestExpire(true)
-              handleSortAccordion()
-            }}
-            title="Closest Expire" />
-        </List.Accordion>
-        <Text>No product Found</Text>
-
-      </Tab>
-    </Tabs>
+          </TouchableRipple>
+        )}
+      />
+      <Modal
+        isVisible={openBottomDrawer}
+        backdropColor='transparent'
+        onBackdropPress={() => setOpenBottomDrawer(false)}
+        animationIn='slideInUp'
+        animationOut='slideOutDown'
+        style={{
+          margin: 0,
+          justifyContent: 'flex-end',
+        }}
+      >
+        <View style={styles.panel}>
+          <TouchableRipple
+            onPress={() => this.props.navigation.navigate('Products')}
+          >
+            <View
+              style={styles.panelButton}
+            >
+              <Text style={styles.panelButtonTitle}>Edit</Text>
+              <Icon
+                name='file-document-edit'
+                type='material-community'
+              />
+            </View>
+          </TouchableRipple>
+          <TouchableRipple
+            onPress={() => this.props.navigation.navigate('Products')}
+          >
+            <View
+              style={styles.panelButton}
+            >
+              <Text style={styles.panelButtonTitle}>Deactivate</Text>
+              <Icon
+                name='cancel'
+                type='material-community'
+              />
+            </View>
+          </TouchableRipple><TouchableRipple
+            onPress={() => this.props.navigation.navigate('Products')}
+          >
+            <View
+              style={styles.panelButton}
+            >
+              <Text style={styles.panelButtonTitle}>Delete</Text>
+              <Icon
+                name='delete'
+                type='antdesign'
+              />
+            </View>
+          </TouchableRipple>
+        </View>
+      </Modal>
+    </View>
   );
 }
 
 
-const styles = {
-  tabStyle: {
-    backgroundColor: colors.gray,
+const styles = StyleSheet.create({
+  main: {
+    backgroundColor: colors.backgroundGray,
+    flex: 1,
+    width: '100%'
   },
-  activeTabStyle: {
-
-    backgroundColor: colors.tabRed
+  panel: {
+    height: 220,
+    padding: 10,
+    backgroundColor: '#2c2c2fAA',
+    paddingTop: 10,
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
+    shadowColor: '#000000',
+    shadowOffset: { width: 0, height: 0 },
+    shadowRadius: 5,
+    shadowOpacity: 0.4,
   },
-  tabText: {
-    color: colors.black
+  panelButton: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    padding: 12,
+    borderRadius: 10,
+    backgroundColor: '#292929',
+    backgroundColor: '#eee',
+    alignItems: 'center',
+    marginVertical: 10,
   },
-  activeTabText: {
-    color: colors.white,
-  }
-}
+  panelButtonTitle: {
+    fontSize: 17,
+    fontWeight: 'bold',
+    color: '#000',
+    marginRight: 10,
+  },
+  accordionLeftMain: {
+    width: '60%',
+  },
+  accordionLeftFields: {
+    flexWrap: 'wrap',
+    flexDirection: 'row',
+    margin: 3,
+  },
+  accordionLeftTextHead: {
+    color: colors.textGray,
+    fontWeight: 'bold'
+  },
+  accordionLeftText: {
+    color: colors.textGray
+  },
+  accordionRight: {
+    width: '40%',
+  },
+});
 
 export default App;

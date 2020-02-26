@@ -1,8 +1,13 @@
 const URL = "https://rocket.pk/rest/all/V1";
 const Apis = {
     Login: URL + '/login',
+    Dashboard: URL + '/vendors/dashboard',
     GetCategories: URL + '/categories',
-    Products: URL + '/vendors/product'
+    Products: URL + '/vendors/product',
+    Orders: URL + '/vendors/order',
+    Notifications : URL + '/vendors/notifications',
+    Profile : URL + '/vendors/me',
+    AttributeSet : URL + '/eav/attribute-sets/list'
 }
 const header = {
     Accept: 'application/json',

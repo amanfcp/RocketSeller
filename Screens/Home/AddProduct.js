@@ -8,7 +8,7 @@ import {
 } from 'react-native';
 import {
     Text,
-    Button
+    CheckBox
 } from 'native-base';
 import {
     Input,
@@ -22,6 +22,10 @@ import {
     Dialog,
     Provider,
     RadioButton,
+    Divider,
+    Menu,
+    Button,
+    TouchableRipple,
 } from 'react-native-paper'
 import {
     BarIndicator
@@ -44,7 +48,13 @@ export default class App extends React.Component {
 
             finalNode: false,
             category: [],
-            selectedCategory: '',
+            checked: [],
+            selectedCategory: [],
+
+            attributes: [],
+            attributeMenuVisible: false,
+            attributeSet: '',
+            attributeSetId: '',
 
             brandName: '',
             brandNameChange: false,
@@ -69,11 +79,12 @@ export default class App extends React.Component {
         }
     }
     static navigationOptions = ({ navigation }) => ({
+        headerTitle: 'Add Product',
         headerTitleStyle: {
             color: colors.white,
         },
         headerStyle: {
-            backgroundColor: colors.red
+            backgroundColor: colors.blue
         },
         headerLeft: () =>
             <Icon
@@ -109,6 +120,10 @@ export default class App extends React.Component {
 
     componentDidMount() {
         Axios.get(Apis.GetCategories, { headers: header }).then(res => {
+            Axios.get(Apis.AttributeSet + '?searchCriteria[pageSize]=84', { headers: header }).then(res => {
+                console.log('component did mount', res.data.items)
+                this.setState({ attributes: [...res.data.items] })
+            }).catch(err => console.log(err))
             this.setState({
                 category: [res.data.children_data[0]],
                 loading: false
@@ -120,11 +135,36 @@ export default class App extends React.Component {
             })
         })
     }
+
+    isItemChecked(nodeName) {
+        return this.state.checked.indexOf(nodeName) > -1
+    }
+
+    manageToggle = (evt, nodeName) => {
+        if (this.isItemChecked(nodeName)) {
+            this.setState({
+                checked: this.state.checked.filter(i => i !== nodeName),
+            })
+            this.state.selectedCategory.splice(this.state.selectedCategory.indexOf(nodeName), 1)
+        } else {
+            this.setState({
+                checked: [...this.state.checked, nodeName],
+                selectedCategory: [...this.state.selectedCategory, nodeName]
+            })
+        }
+    }
+
+    toggleAttributeMenu = () => {
+        this.setState({ attributeMenuVisible: !this.state.attributeMenuVisible })
+    }
+
     render() {
         const {
+            checked,
             loading,
             productName, productNameChange, productNamePlaceHolder,
             category, selectedCategory, finalNode,
+            attributeMenuVisible, attributeSet, attributes,
             brandName, brandNameChange, brandNamePlaceHolder, brandsDialogVisible,
             modelName, modelNameChange, modelNamePlaceHolder,
             highlights, highlightsChange, highlightsPlaceHolder,
@@ -144,7 +184,7 @@ export default class App extends React.Component {
                     <BarIndicator
                         animationEasing={Easing.linear}
                         count={4}
-                        color={colors.red}
+                        color={colors.black}
                     />
                 </View>
                 :
@@ -179,7 +219,7 @@ export default class App extends React.Component {
                                 <Icon
                                     type='antdesign'
                                     name='dropbox'
-                                    color={productNameChange ? colors.green : colors.red}
+                                    color={productNameChange ? colors.green : colors.lightBlue}
                                 />
                             }
                             leftIconContainerStyle={styles.iconContainer}
@@ -187,8 +227,18 @@ export default class App extends React.Component {
                         <NestedListView
                             data={category}
                             getChildrenName={(node) => 'children_data'}
-                            onNodePressed={(node) => node.children_data.length > 0 ? null : this.setState({ finalNode: true, selectedCategory: node.name }, console.log(node))}
-
+                            onNodePressed={(node) =>
+                                node.children_data.length > 0 ? null :
+                                    !selectedCategory.includes(node.name) ?
+                                        this.setState({
+                                            checked: [...checked, node.name],
+                                            selectedCategory: [...selectedCategory, node.name]
+                                        }, console.warn(selectedCategory))
+                                        :
+                                        this.setState({
+                                            finalNode: true,
+                                        })
+                            }
                             renderNode={(node, level) => (
                                 <NestedRow
                                     children={node.children_data}
@@ -196,8 +246,13 @@ export default class App extends React.Component {
                                     level={level}
                                 >
                                     <View
-                                        style={finalNode && level == 1 ? styles.categoryFinal : styles.categoryItem}
+                                        style={styles.categoryItem}
                                     >
+                                        <CheckBox
+                                            style={{ marginRight: 20 }}
+                                            checked={this.isItemChecked(node.name)}
+                                            onPress={evt => { this.manageToggle(evt, node.name) }}
+                                        />
                                         <View
                                             style={{
                                                 flex: 1,
@@ -205,8 +260,11 @@ export default class App extends React.Component {
                                                 justifyContent: 'space-between'
                                             }}
                                         >
-                                            <Text>{level == 1 ? 'Category' : node.name}</Text>
-                                            <Text>{level == 1 ? selectedCategory : null}</Text>
+                                            <Text
+                                                style={{
+                                                    color: colors.textGray
+                                                }}
+                                            >{level == 1 ? 'Category' : node.name}</Text>
                                         </View>
                                         {
                                             node.children_data.length > 0 ?
@@ -223,10 +281,89 @@ export default class App extends React.Component {
                                 </NestedRow>
                             )}
                         />
-
-                        {/* { */}
-                        {/* // selectedCategory ? */}
-                        <Input
+                        <View
+                            style={styles.selectedCategories}
+                        >
+                            {
+                                selectedCategory.map(item => (
+                                    <TouchableOpacity
+                                        style={styles.selectedCategoryItem}
+                                    >
+                                        <Text
+                                            ref={(text) => { this.textInput = text }}
+                                            style={styles.selectedCategoryItemText}
+                                        >{item}</Text>
+                                        <Icon
+                                            onPress={() => {
+                                                if (this.isItemChecked(item)) {
+                                                    this.setState({
+                                                        checked: checked.filter(i => i !== item),
+                                                    })
+                                                    selectedCategory.splice(selectedCategory.indexOf(item), 1)
+                                                }
+                                            }}
+                                            hitSlop={{ top: 10, left: 10, right: 10, bottom: 10 }}
+                                            size={16}
+                                            underlayColor='transparent'
+                                            iconStyle={styles.selectedCategoryItemIcon}
+                                            name='cross'
+                                            type='entypo'
+                                            color={colors.white}
+                                        />
+                                    </TouchableOpacity>
+                                ))
+                            }
+                        </View>
+                        <Menu
+                            contentStyle={{
+                                padding: 0,
+                                margin: 0,
+                                height: 250,
+                            }}
+                            visible={attributeMenuVisible}
+                            onDismiss={this.toggleAttributeMenu}
+                            anchor={
+                                <TouchableRipple
+                                    onPress={this.toggleAttributeMenu}
+                                >
+                                    <View
+                                        style={styles.categoryItem}
+                                    >
+                                        <Text
+                                            style={{
+                                                color: colors.textGray
+                                            }}
+                                        >Attribute Set</Text>
+                                        <Text
+                                            style={{
+                                                color: colors.textGray
+                                            }}
+                                        >
+                                            {attributeSet}
+                                        </Text>
+                                    </View>
+                                </TouchableRipple>
+                            }
+                            children=
+                            {<ScrollView>
+                                {attributes.map((item, index) => {
+                                    return (
+                                        item.attribute_set_name === 'Default' ? null :
+                                            <Menu.Item
+                                                onPress={() => {
+                                                    this.toggleAttributeMenu()
+                                                    this.setState({
+                                                        attributeSet: item.attribute_set_name,
+                                                        attributeSetId: item.attribute_set_id,
+                                                    })
+                                                }}
+                                                title={`${index + 1}. ${item.attribute_set_name}`} />
+                                    )
+                                }
+                                )}
+                            </ScrollView>}
+                        />
+                        {/* <Input
                             value={brandName}
                             keyboardType='default'
                             onChangeText={text => {
@@ -254,7 +391,7 @@ export default class App extends React.Component {
                                 <Icon
                                     type='zocial'
                                     name='blogger'
-                                    color={brandNameChange ? colors.green : colors.red}
+                                    color={brandNameChange ? colors.green : colors.lightBlue}
                                 />
                             }
                             leftIconContainerStyle={styles.iconContainer}
@@ -352,7 +489,7 @@ export default class App extends React.Component {
                                     </TouchableOpacity>
                                 </Dialog.Content>
                             </Dialog>
-                        </Portal>
+                        </Portal> */}
 
                         <Input
                             value={modelName}
@@ -382,12 +519,12 @@ export default class App extends React.Component {
                                 <Icon
                                     type='antdesign'
                                     name='creditcard'
-                                    color={modelNameChange ? colors.green : colors.red}
+                                    color={modelNameChange ? colors.green : colors.lightBlue}
                                 />
                             }
                             leftIconContainerStyle={styles.iconContainer}
                         />
-                        <Input
+                        {/* <Input
                             multiline={true}
                             textAlignVertical={'top'}
                             value={highlights}
@@ -417,11 +554,13 @@ export default class App extends React.Component {
                                 <Icon
                                     type='material-community'
                                     name='format-color-highlight'
-                                    color={highlightsChange ? colors.green : colors.red}
+                                    color={highlightsChange ? colors.green : colors.lightBlue}
                                 />
                             }
                             leftIconContainerStyle={styles.iconContainer}
                         />
+                         */}
+
                         <Input
                             multiline={true}
                             textAlignVertical={'top'}
@@ -452,12 +591,12 @@ export default class App extends React.Component {
                                 <Icon
                                     type='material'
                                     name='description'
-                                    color={prodDescChange ? colors.green : colors.red}
+                                    color={prodDescChange ? colors.green : colors.lightBlue}
                                 />
                             }
                             leftIconContainerStyle={styles.iconContainer}
                         />
-                        <Input
+                        {/* <Input
                             keyboardType='default'
                             onChangeText={text => {
                                 this.setState({
@@ -484,13 +623,13 @@ export default class App extends React.Component {
                                 <Icon
                                     type='ionicon'
                                     name='ios-videocam'
-                                    color={videoUrlChange ? colors.green : colors.red}
+                                    color={videoUrlChange ? colors.green : colors.lightBlue}
                                 />
                             }
                             leftIconContainerStyle={styles.iconContainer}
-                        />
+                        /> */}
 
-                        <TouchableOpacity
+                        {/* <TouchableOpacity
                             style={{
                                 marginBottom: 16,
                             }}
@@ -516,12 +655,12 @@ export default class App extends React.Component {
                                     }}
                                 />
                             </View>
-                        </TouchableOpacity>
+                        </TouchableOpacity> */}
 
                         {/* // : null */}
                         {/* } */}
-                    </ScrollView>
-                </Provider>
+                    </ScrollView >
+                </Provider >
         );
     }
 };
@@ -558,7 +697,7 @@ const styles = StyleSheet.create({
         fontFamily: 'arial',
         fontSize: 14,
         marginLeft: 60,
-        color: colors.red,
+        color: colors.lightBlue,
     },
     iconContainer: {
         paddingRight: 10,
@@ -576,20 +715,37 @@ const styles = StyleSheet.create({
         height: 50,
         marginTop: 1.5,
         marginHorizontal: 10,
-        backgroundColor: colors.tabGray,
+        backgroundColor: colors.lightBlue + '55',
         borderBottomWidth: 0.5,
         borderColor: colors.white,
     },
-    categoryFinal: {
+    selectedCategories: {
+        flexWrap: 'wrap',
         flexDirection: 'row',
-        justifyContent: 'space-between',
+        margin: 10,
+        borderBottomColor: colors.textGray,
+        borderBottomWidth: 0.8
+    },
+    selectedCategoryItem: {
+        margin: 3,
+        padding: 5,
+        flexDirection: 'row',
         alignItems: 'center',
-        paddingHorizontal: 20,
-        height: 50,
-        marginTop: 1.5,
-        marginHorizontal: 10,
-        backgroundColor: colors.green + '80',
-        borderBottomWidth: 0.5,
-        borderColor: colors.white,
+        backgroundColor: colors.blue,
+        borderWidth: 0.8,
+        borderColor: colors.dashboardYellow,
+        borderRadius: 20,
+    },
+    selectedCategoryItemText: {
+        paddingLeft: 4,
+        textAlign: 'center',
+        color: colors.white
+    },
+    selectedCategoryItemIcon: {
+        borderTopRightRadius: 20,
+        borderBottomRightRadius: 20,
+        padding: 3,
+        margin: 0,
+        backgroundColor: colors.blue,
     },
 });

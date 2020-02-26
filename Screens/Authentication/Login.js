@@ -59,7 +59,7 @@ export default class Login extends React.Component {
                     <Text
                         style={styles.title}
                     >
-                        Login
+                        Rocket Seller Center
                 </Text>
 
                     <Form
@@ -114,7 +114,7 @@ export default class Login extends React.Component {
                                 <Icon
                                     type='font-awesome'
                                     name='envelope-o'
-                                    color={colors.green}
+                                    color={colors.lightBlue}
                                 />
                             }
                             leftIconContainerStyle={styles.iconContainer}
@@ -146,7 +146,7 @@ export default class Login extends React.Component {
                                 <Icon
                                     type='material'
                                     name='lock'
-                                    color={colors.green}
+                                    color={colors.lightBlue}
                                 />}
                             leftIconContainerStyle={styles.iconContainer}
                             rightIcon={
@@ -157,6 +157,7 @@ export default class Login extends React.Component {
                                         }}
                                         type='feather'
                                         name='eye'
+                                        size={20}
                                         color={colors.gray}
                                     />
                                     :
@@ -165,6 +166,7 @@ export default class Login extends React.Component {
                                             this.setState({ showPass: true })
                                         }}
                                         type='feather'
+                                        size={20}
                                         name='eye-off'
                                         color={colors.gray}
                                     />
@@ -182,7 +184,7 @@ export default class Login extends React.Component {
                             <Text style={{
                                 margin: 10,
                                 marginBottom: 16,
-                                color: colors.green,
+                                color: colors.lightBlue,
                                 marginRight: 30,
                             }}>
                                 Forgot Password?</Text>
@@ -219,9 +221,9 @@ export default class Login extends React.Component {
                         }}
                     >
                         <Text style={{
-                            color: colors.green,
+                            color: colors.lightBlue,
                             borderBottomWidth: 1,
-                            borderBottomColor: colors.green
+                            borderBottomColor: colors.lightBlue
                         }}>
                             Create an Account</Text>
                     </TouchableOpacity>
@@ -234,7 +236,6 @@ export default class Login extends React.Component {
 const styles = StyleSheet.create({
     mainScroller: {
         marginVertical: 10,
-
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
@@ -243,7 +244,7 @@ const styles = StyleSheet.create({
         fontSize: 28,
         marginBottom: 50,
         fontWeight: 'bold',
-        color: colors.red
+        color: colors.blue
     },
     countryPickerContainer: {
         alignSelf: 'center',
@@ -253,7 +254,9 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         justifyContent: 'space-between',
         alignItems: 'center',
-        backgroundColor: colors.red + '20',
+        borderBottomWidth:1,
+        borderBottomColor: colors.blue
+        // backgroundColor: colors.white,
     },
     countryPickerText: {
         flex: 1,
@@ -268,7 +271,7 @@ const styles = StyleSheet.create({
     countryPicker: {
         alignItems: 'center',
         justifyContent: 'center',
-        backgroundColor: colors.red + '10',
+        // backgroundColor: colors.red + '10',
         width: 70,
         height: 50,
     },
@@ -288,7 +291,7 @@ const styles = StyleSheet.create({
         fontFamily: 'arial',
         fontSize: 14,
         marginLeft: 60,
-        color: colors.green
+        color: colors.lightBlue
     },
     iconContainer: {
         paddingRight: 10,
@@ -300,7 +303,7 @@ const styles = StyleSheet.create({
     },
     loginButton: {
         borderRadius: 8,
-        backgroundColor: colors.red,
+        backgroundColor: colors.blue,
         elevation: 0,
         height: 60,
         width: '95%',

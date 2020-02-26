@@ -26,7 +26,7 @@ export default class ForgotPassword extends React.Component {
     }
 
     static navigationOptions = {
-        headerShown: false
+        headerShown: false,
     }
 
     render() {
@@ -34,16 +34,32 @@ export default class ForgotPassword extends React.Component {
             <View
                 style={styles.main}
             >
-                <Icon
-                    onPress={()=>this.props.navigation.goBack()}
-                    iconStyle={{
-                        alignSelf: 'flex-start',
-                        marginBottom: 20,
+                <View
+                    style={{
+                        flexDirection:'row',
+                        marginBottom:16,
                     }}
-                    name='ios-arrow-back'
-                    type='ionicon'
-                    size={20}
-                />
+                >
+                    <Icon
+                        onPress={() => this.props.navigation.goBack()}
+                        iconStyle={{
+                            alignSelf: 'flex-start',
+                            marginBottom: 20,
+                        }}
+                        name='ios-arrow-back'
+                        type='ionicon'
+                        size={20}
+                    />
+                    <Text
+                        style={{
+                            alignSelf:'flex-start',
+                            marginLeft:100,
+                            fontSize:20,
+                        }}
+                    >
+                        Reset Password
+                </Text>
+                </View>
                 <View>
                     <Text
                         style={styles.textHead}
@@ -51,7 +67,7 @@ export default class ForgotPassword extends React.Component {
                     <Text
                         style={styles.textDesc}
                     >Please enter the email address associated with your Rocket Seller Account, we will
-                                send you an email with a link to reset your password.
+                                    send you an email with a link to reset your password.
                 </Text>
                 </View>
                 <Input
@@ -140,7 +156,7 @@ const styles = {
     },
     loginButton: {
         borderRadius: 8,
-        backgroundColor: colors.red,
+        backgroundColor: colors.blue,
         elevation: 0,
         height: 60,
         width: '100%',
